@@ -1,0 +1,794 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#ff5a27">
+  <title>bluulunchworldcup</title>
+  <style>
+    :root {
+      --orange: #ff5b28;
+      --orange-dark: #ed3f22;
+      --ink: #271d19;
+      --muted: #776b65;
+      --cream: #fffaf4;
+      --line: rgba(63, 39, 29, .1);
+      --shadow: 0 24px 65px rgba(69, 42, 27, .12);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { min-height: 100%; background: var(--cream); }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--ink);
+      font-family: Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", Inter, system-ui, sans-serif;
+      background:
+        radial-gradient(circle at 8% 12%, rgba(255, 195, 117, .2), transparent 25rem),
+        radial-gradient(circle at 92% 80%, rgba(255, 103, 54, .1), transparent 28rem),
+        var(--cream);
+      overflow-x: hidden;
+    }
+
+    button { font: inherit; }
+
+    .topbar {
+      height: 68px;
+      display: flex;
+      align-items: center;
+      background: linear-gradient(110deg, var(--orange), #ff7627 58%, var(--orange-dark));
+      color: white;
+      box-shadow: 0 8px 28px rgba(236, 67, 31, .22);
+      position: relative;
+      z-index: 10;
+    }
+
+    .topbar::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(100deg, transparent 20%, rgba(255,255,255,.12), transparent 60%);
+    }
+
+    .topbar-inner {
+      width: min(1180px, calc(100% - 40px));
+      margin: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      z-index: 1;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      color: inherit;
+      text-decoration: none;
+      font-size: clamp(18px, 2.1vw, 24px);
+      font-weight: 900;
+      letter-spacing: -.04em;
+    }
+
+    .brand-mark {
+      width: 37px;
+      height: 37px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255,255,255,.42);
+      border-radius: 12px;
+      background: rgba(255,255,255,.16);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.28);
+      font-size: 20px;
+    }
+
+    .top-status {
+      padding: 8px 12px;
+      border: 1px solid rgba(255,255,255,.25);
+      border-radius: 999px;
+      background: rgba(111, 31, 12, .12);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .02em;
+    }
+
+    main {
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 48px 0 64px;
+    }
+
+    .screen { display: none; }
+    .screen.active { display: block; animation: screen-in .55s cubic-bezier(.2,.8,.2,1) both; }
+
+    @keyframes screen-in {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 13px;
+      color: var(--orange-dark);
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--orange);
+      box-shadow: 0 0 0 5px rgba(255,91,40,.12);
+    }
+
+    h1, h2, p { margin-top: 0; }
+
+    h1 {
+      max-width: 780px;
+      margin-bottom: 16px;
+      font-size: clamp(38px, 6vw, 72px);
+      line-height: 1.03;
+      letter-spacing: -.065em;
+    }
+
+    .accent { color: var(--orange); }
+
+    .intro {
+      max-width: 660px;
+      margin-bottom: 34px;
+      color: var(--muted);
+      font-size: clamp(15px, 1.8vw, 18px);
+      line-height: 1.7;
+      word-break: keep-all;
+    }
+
+    .setup-grid {
+      display: grid;
+      grid-template-columns: 1.35fr .65fr;
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    .panel {
+      border: 1px solid rgba(255,255,255,.85);
+      border-radius: 28px;
+      background: rgba(255,255,255,.74);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .round-panel { padding: clamp(24px, 4vw, 38px); }
+
+    .panel-title {
+      margin-bottom: 9px;
+      font-size: 21px;
+      font-weight: 900;
+      letter-spacing: -.035em;
+    }
+
+    .panel-copy {
+      margin-bottom: 22px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .round-options {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .round-option {
+      min-height: 94px;
+      padding: 16px 10px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: white;
+      color: var(--ink);
+      cursor: pointer;
+      transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease, background .25s ease;
+    }
+
+    .round-option:hover { transform: translateY(-4px); border-color: rgba(255,91,40,.38); }
+
+    .round-option.selected {
+      border-color: var(--orange);
+      color: white;
+      background: linear-gradient(145deg, #ff7436, var(--orange-dark));
+      box-shadow: 0 12px 24px rgba(240, 68, 33, .25);
+      transform: translateY(-4px);
+    }
+
+    .round-option strong { display: block; font-size: 23px; }
+    .round-option span { display: block; margin-top: 5px; font-size: 11px; opacity: .72; }
+
+    .start-btn, .again-btn {
+      width: 100%;
+      min-height: 58px;
+      margin-top: 20px;
+      border: 0;
+      border-radius: 17px;
+      color: white;
+      background: linear-gradient(110deg, var(--orange), var(--orange-dark));
+      box-shadow: 0 13px 30px rgba(238, 63, 30, .25);
+      cursor: pointer;
+      font-weight: 900;
+      transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+    }
+
+    .start-btn:hover, .again-btn:hover { transform: translateY(-2px); box-shadow: 0 17px 34px rgba(238, 63, 30, .32); filter: saturate(1.12); }
+    .start-btn:active, .again-btn:active { transform: translateY(1px) scale(.99); }
+
+    .count-panel {
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      position: relative;
+      color: white;
+      background: linear-gradient(150deg, #30231e, #594034);
+    }
+
+    .count-panel::after {
+      content: "🍱";
+      position: absolute;
+      right: -15px;
+      bottom: -28px;
+      font-size: 120px;
+      opacity: .12;
+      transform: rotate(-10deg);
+    }
+
+    .count-label { font-size: 13px; font-weight: 800; opacity: .66; }
+    .count-number { margin: 5px 0; font-size: clamp(58px, 8vw, 94px); font-weight: 950; line-height: 1; letter-spacing: -.07em; }
+    .count-number small { font-size: 19px; letter-spacing: -.03em; }
+    .count-note { max-width: 250px; margin: 0; font-size: 13px; line-height: 1.55; opacity: .68; }
+
+    .game-head {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: end;
+      gap: 20px;
+      margin-bottom: 22px;
+    }
+
+    .game-title h2 { margin: 4px 0 0; font-size: clamp(27px, 4vw, 42px); letter-spacing: -.055em; }
+    .game-title p { margin-bottom: 0; color: var(--muted); font-size: 13px; }
+
+    .progress-wrap { width: min(290px, 26vw); padding-bottom: 6px; text-align: center; }
+    .progress-copy { margin-bottom: 8px; color: var(--muted); font-size: 12px; font-weight: 800; }
+    .progress-track { height: 7px; overflow: hidden; border-radius: 99px; background: #eadfd5; }
+    .progress-bar { height: 100%; width: 0; border-radius: inherit; background: linear-gradient(90deg, #ff9b43, var(--orange-dark)); transition: width .45s ease; }
+
+    .quit-btn {
+      justify-self: end;
+      padding: 10px 14px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      color: var(--muted);
+      background: rgba(255,255,255,.64);
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 800;
+      transition: color .2s ease, border-color .2s ease;
+    }
+
+    .quit-btn:hover { color: var(--orange-dark); border-color: rgba(255,91,40,.35); }
+
+    .versus-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: clamp(15px, 3vw, 34px);
+      position: relative;
+    }
+
+    .vs-badge {
+      width: 58px;
+      height: 58px;
+      display: grid;
+      place-items: center;
+      border: 5px solid var(--cream);
+      border-radius: 50%;
+      position: absolute;
+      left: 50%;
+      top: 45%;
+      z-index: 5;
+      transform: translate(-50%, -50%) rotate(-7deg);
+      color: white;
+      background: linear-gradient(145deg, #ff812f, var(--orange-dark));
+      box-shadow: 0 10px 24px rgba(68,42,27,.22);
+      font-size: 15px;
+      font-weight: 950;
+      letter-spacing: -.04em;
+    }
+
+    .food-card {
+      min-width: 0;
+      padding: 0;
+      overflow: hidden;
+      border: 1px solid rgba(72,45,34,.08);
+      border-radius: clamp(22px, 3vw, 32px);
+      color: inherit;
+      background: white;
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      text-align: left;
+      position: relative;
+      isolation: isolate;
+      transition: transform .42s cubic-bezier(.2,.8,.2,1), box-shadow .42s ease, border-color .3s ease;
+      animation: card-in .55s cubic-bezier(.2,.8,.2,1) both;
+    }
+
+    .food-card:nth-of-type(2) { animation-delay: .07s; }
+
+    @keyframes card-in {
+      from { opacity: 0; transform: translateY(18px) scale(.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .food-card:hover {
+      z-index: 3;
+      transform: translateY(-9px) scale(1.025);
+      border-color: rgba(255,91,40,.32);
+      box-shadow: 0 30px 72px rgba(79,44,25,.22);
+    }
+
+    .food-card:focus-visible { outline: 4px solid rgba(255,91,40,.25); outline-offset: 5px; }
+
+    .food-image-wrap { height: clamp(285px, 43vw, 500px); overflow: hidden; position: relative; background: #eee5dc; }
+
+    .food-image {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      transition: transform .65s cubic-bezier(.2,.8,.2,1), filter .4s ease;
+    }
+
+    .food-card:hover .food-image { transform: scale(1.075); filter: saturate(1.08) contrast(1.02); }
+
+    .pick-overlay {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      opacity: 0;
+      background: linear-gradient(to top, rgba(37,18,9,.48), rgba(255,91,40,.04) 65%);
+      transition: opacity .35s ease;
+    }
+
+    .pick-overlay span {
+      padding: 12px 18px;
+      border: 1px solid rgba(255,255,255,.48);
+      border-radius: 999px;
+      color: white;
+      background: rgba(255,91,40,.86);
+      box-shadow: 0 12px 30px rgba(75,25,8,.24);
+      font-size: clamp(14px, 2vw, 17px);
+      font-weight: 900;
+      transform: translateY(13px) scale(.94);
+      transition: transform .35s cubic-bezier(.2,.8,.2,1);
+      backdrop-filter: blur(7px);
+    }
+
+    .food-card:hover .pick-overlay { opacity: 1; }
+    .food-card:hover .pick-overlay span { transform: translateY(0) scale(1); }
+
+    .food-info { min-height: 132px; padding: clamp(20px, 3vw, 28px); }
+    .food-name { margin: 0 0 8px; font-size: clamp(19px, 2.5vw, 27px); line-height: 1.28; letter-spacing: -.045em; word-break: keep-all; }
+    .restaurant { display: flex; align-items: center; gap: 7px; margin: 0; color: var(--muted); font-size: 13px; }
+    .restaurant::before { content: ""; width: 5px; height: 5px; flex: 0 0 auto; border-radius: 50%; background: var(--orange); }
+
+    .food-card.chosen { animation: chosen .52s ease both; pointer-events: none; }
+    .food-card.rejected { animation: rejected .45s ease both; pointer-events: none; }
+
+    @keyframes chosen {
+      45% { transform: translateY(-12px) scale(1.04); box-shadow: 0 0 0 5px rgba(255,91,40,.24), 0 30px 65px rgba(255,91,40,.3); }
+      to { opacity: 0; transform: scale(1.08); }
+    }
+
+    @keyframes rejected { to { opacity: 0; transform: scale(.91); filter: grayscale(.65); } }
+
+    .winner-wrap { max-width: 760px; margin: 0 auto; text-align: center; position: relative; }
+    .winner-kicker { color: var(--orange-dark); font-size: 14px; font-weight: 950; letter-spacing: .12em; }
+    .winner-title { margin: 8px 0 24px; font-size: clamp(38px, 7vw, 66px); letter-spacing: -.065em; }
+    .winner-card { overflow: hidden; border-radius: 32px; background: white; box-shadow: 0 32px 90px rgba(81,44,24,.2); animation: winner-pop .8s cubic-bezier(.16,1,.3,1) both; }
+
+    @keyframes winner-pop {
+      from { opacity: 0; transform: translateY(24px) scale(.9) rotate(-1.5deg); }
+      to { opacity: 1; transform: none; }
+    }
+
+    .winner-image { width: 100%; height: clamp(330px, 53vw, 500px); display: block; object-fit: cover; }
+    .winner-info { padding: 28px; }
+    .winner-name { margin: 0 0 7px; font-size: clamp(25px, 4vw, 38px); line-height: 1.2; letter-spacing: -.05em; }
+    .winner-restaurant { margin: 0; color: var(--muted); font-size: 14px; }
+    .winner-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 17px; }
+    .winner-actions .again-btn { margin: 0; }
+
+    .secondary-btn {
+      min-height: 58px;
+      border: 1px solid var(--line);
+      border-radius: 17px;
+      color: var(--ink);
+      background: white;
+      cursor: pointer;
+      font-weight: 900;
+      transition: transform .2s ease, border-color .2s ease;
+    }
+
+    .secondary-btn:hover { transform: translateY(-2px); border-color: rgba(255,91,40,.42); }
+
+    .confetti { width: 10px; height: 18px; position: fixed; top: -24px; z-index: 30; pointer-events: none; animation: confetti-fall var(--duration) linear forwards; }
+    @keyframes confetti-fall { to { transform: translate3d(var(--drift), 110vh, 0) rotate(780deg); } }
+
+    @media (max-width: 760px) {
+      .topbar { height: 60px; }
+      .topbar-inner, main { width: min(100% - 24px, 1180px); }
+      .top-status { display: none; }
+      main { padding-top: 32px; }
+      .setup-grid { grid-template-columns: 1fr; }
+      .count-panel { min-height: 210px; }
+      .round-options { grid-template-columns: repeat(2, 1fr); }
+      .game-head { grid-template-columns: 1fr auto; align-items: center; }
+      .progress-wrap { grid-column: 1 / -1; grid-row: 2; width: 100%; }
+      .quit-btn { grid-column: 2; grid-row: 1; }
+      .versus-grid { grid-template-columns: 1fr; gap: 18px; }
+      .vs-badge { width: 48px; height: 48px; top: 50%; font-size: 13px; }
+      .food-image-wrap { height: min(47vh, 380px); }
+      .food-info { min-height: auto; }
+      .food-card:hover { transform: translateY(-4px) scale(1.008); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="#" id="brandLink" aria-label="처음으로">
+        <span class="brand-mark">🍽️</span>
+        <span>bluulunchworldcup</span>
+      </a>
+      <div class="top-status">TODAY'S LUNCH PICK</div>
+    </div>
+  </header>
+
+  <main>
+    <section id="setupScreen" class="screen active" aria-labelledby="setupTitle">
+      <div class="eyebrow">Lunch tournament</div>
+      <h1 id="setupTitle">뭐가 맛있니?</h1>
+
+      <div class="setup-grid">
+        <div class="panel round-panel">
+          <div class="panel-title">몇 강으로 플레이할까요?</div>
+          <p class="panel-copy">선택한 수만큼 전체 메뉴에서 무작위로 출전합니다.</p>
+          <div id="roundOptions" class="round-options" role="group" aria-label="대진 규모 선택"></div>
+          <button id="startButton" class="start-btn" type="button">32강 시작하기 →</button>
+        </div>
+        <aside class="panel count-panel">
+          <div>
+            <div class="count-label">등록된 점심 메뉴</div>
+            <div class="count-number"><span id="menuCount">0</span><small>개</small></div>
+          </div>
+          <p class="count-note">같은 대진을 골라도 매번 새로운 메뉴와 새로운 순서로 만나요.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section id="gameScreen" class="screen" aria-live="polite">
+      <div class="game-head">
+        <div class="game-title">
+          <p id="gameSubtitle">둘 중 하나를 선택하세요</p>
+          <h2 id="roundTitle">32강</h2>
+        </div>
+        <div class="progress-wrap">
+          <div id="progressCopy" class="progress-copy">1 / 16</div>
+          <div class="progress-track"><div id="progressBar" class="progress-bar"></div></div>
+        </div>
+        <button id="quitButton" class="quit-btn" type="button">처음으로</button>
+      </div>
+
+      <div id="versusGrid" class="versus-grid">
+        <button class="food-card" id="leftCard" type="button">
+          <div class="food-image-wrap">
+            <img class="food-image" alt="" draggable="false">
+            <div class="pick-overlay"></div>
+          </div>
+          <div class="food-info">
+            <h3 class="food-name"></h3>
+            <p class="restaurant"></p>
+          </div>
+        </button>
+        <div class="vs-badge" aria-hidden="true">VS</div>
+        <button class="food-card" id="rightCard" type="button">
+          <div class="food-image-wrap">
+            <img class="food-image" alt="" draggable="false">
+            <div class="pick-overlay"></div>
+          </div>
+          <div class="food-info">
+            <h3 class="food-name"></h3>
+            <p class="restaurant"></p>
+          </div>
+        </button>
+      </div>
+    </section>
+
+    <section id="winnerScreen" class="screen" aria-live="polite">
+      <div class="winner-wrap">
+        <div class="winner-kicker">🏆 TODAY'S WINNER</div>
+        <h2 class="winner-title">오늘 점심은 이거!</h2>
+        <div class="winner-card">
+          <img id="winnerImage" class="winner-image" alt="오늘의 우승 메뉴" draggable="false">
+          <div class="winner-info">
+            <h3 id="winnerName" class="winner-name"></h3>
+            <p id="winnerRestaurant" class="winner-restaurant"></p>
+          </div>
+        </div>
+        <div class="winner-actions">
+          <button id="replayButton" class="again-btn" type="button">같은 대진 다시하기</button>
+          <button id="homeButton" class="secondary-btn" type="button">다른 대진 고르기</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const menuFiles = [
+      "BBQ Chicken (Firepit).jpg",
+      "Beef Bone Soup (설렁탕) (Mom's Kitchen).jpg",
+      "Beef Soft Tofu Stew (차돌순두부) (Mom's Kitchen).jpg",
+      "Beef Teriyaki (Sakura Teriyaki).jpg",
+      "Bibimbap 비빔밥 (Mom's Kitchen).jpg",
+      "Braised Kimchi and Pork Ribs - 등갈비김치찜 (Mom's Kitchen).jpg",
+      "Budae Jjigae (부대찌개) (Mom's Kitchen).jpg",
+      "Bulgogi Rice - 불고기 (Broad Bunsik).jpg",
+      "Burger+ (Food Truck) - Burger(angus) wFries (Burger+).jpg",
+      "Carne Asada - Steak (Noches de Colombia).jpg",
+      "Chicken Cutlet Lunch Box - 치킨까스 (Broad Bunsik).jpg",
+      "Chicken Cutlet Sandwich + Tteokbokki (Broad Bunsik).jpg",
+      "Chicken platter (Juicy Platters).jpg",
+      "Chicken Quesadilla (Sombrero Mexican Grill).jpg",
+      "Chicken Teriyaki (Yuki Hana).jpg",
+      "Chicken Teriyaki Bento Box (Sendai Sushi).jpg",
+      "Crispy Boneless Chicken (Don Chicken).jpg",
+      "DakGalbi lunch box 닭갈비도시락 (Mom's Kitchen).jpg",
+      "Double Cooked Pork Belly (Hot Fish).jpg",
+      "Fettuccini Alfredo (Hasbrouck Heights Pizza).jpg",
+      "Fluffies Filled Mac (Fluffes).jpg",
+      "Galbitang (Beef) - 갈비탕 (Mom's Kitchen).jpg",
+      "Grande Fajita Steak Burrito Box (On The Border).jpg",
+      "Grilled Mackerel lunch Box - 고등어구이 (Mom's Kitchen).jpg",
+      "Ham & Cheese Sandwich Boxed Lunch (Ted's Deli and Catering).jpg",
+      "Hamburger steak lunch box 햄버거스테이크 (Mom's Kitchen).jpg",
+      "Italian Catering (Hasbrouck Heights Pizza).jpg",
+      "Jeyuk Lunch Box (Pork) - 제육볶음 (Power of Rice - 밥심).jpg",
+      "Jeyuk lunch box(pork) 제육볶음( Mom's Kitchen ).jpg",
+      "Kampungi Bap - 깐풍기밥 (333 Jjamppong).jpg",
+      "Kampungi Bap(fried rice) 깐풍기밥 (Gyeonghoeru).jpg",
+      "Korean Dumpling Soup - 만두국 (Broad Bunsik).jpg",
+      "Mapo Tofu (Hot Fish).jpg",
+      "Omurice lunch box 오므라이스 (Mom's Kitchen).jpg",
+      "Paisita Mini Typical Colombian Dish (Noches de Colombia).jpg",
+      "Pizza Box(BJ's Favorite).jpg",
+      "Pork Belly Don 차슈동 (Menya).jpg",
+      "Pork Belly Don 챠슈동 (Menya).jpg",
+      "Pork Cutlet - 돈까스 (Broad Bunsik).jpg",
+      "Salmon Steak Lunch Box - 연어스테이크 (Mom's Kitchen).jpg",
+      "Seafood Soft Tofu Stew (해물순두부) (Mom's Kitchen).jpg",
+      "Shredded Chicken with Garlic Sauce (Hot Fish).jpg",
+      "Soybean Pulp Stew (콩비지찌개) (Mom's Kitchen).jpg",
+      "Spaghetti w.Meatballs (Hasbrouck Heights Pizza).jpg",
+      "Spicy beef soup (육개장) (Mom's Kitchen).jpg",
+      "Spicy Pork Bone Soup (감자탕) (Mom's Kitchen).jpg",
+      "Spicy Vegetable Stew (애호박찌개) (Mom's Kitchen).jpg",
+      "Squid & pork lunch box 오삼불고기 (Mom's Kitchen).jpg",
+      "Supremo Chicken Quesadilla (El Pollo Supremo).jpg",
+      "Taco Tuesday (Chicken, Pork, Beef) (Sombrero Mexican Grill).jpg",
+      "Udon & Kimbap - 우동 & 김밥 (Broad Bunsik).jpg",
+      "🍕😊 Pizza Tuesday 😊 🍕 (Hasbrouck Heights Pizza).jpg"
+    ];
+
+    const menus = menuFiles.map((file, id) => {
+      const stem = file.replace(/\.jpg$/i, "").trim();
+      const match = stem.match(/^(.*?)\s*\(\s*([^()]*)\s*\)\s*$/);
+      return {
+        id,
+        file,
+        image: `Menu/${encodeURIComponent(file)}`,
+        name: match ? match[1].trim() : stem,
+        restaurant: match ? match[2].trim() : "bluu Kitchen"
+      };
+    });
+
+    const $ = (selector) => document.querySelector(selector);
+    const screens = [$("#setupScreen"), $("#gameScreen"), $("#winnerScreen")];
+    const roundOptions = $("#roundOptions");
+    const leftCard = $("#leftCard");
+    const rightCard = $("#rightCard");
+
+    let selectedSize = 32;
+    let roundMenus = [];
+    let nextRound = [];
+    let matchIndex = 0;
+    let roundNumber = 1;
+    let locked = false;
+
+    function shuffle(items) {
+      const result = [...items];
+      for (let i = result.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [result[i], result[j]] = [result[j], result[i]];
+      }
+      return result;
+    }
+
+    function showScreen(target) {
+      screens.forEach((screen) => screen.classList.toggle("active", screen === target));
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function roundLabel(count) {
+      if (count === 2) return "결승";
+      if (count === 4) return "준결승 · 4강";
+      return `${count}강`;
+    }
+
+    function buildRoundOptions() {
+      const possible = [4, 8, 16, 32].filter((size) => size <= menus.length);
+      selectedSize = possible[possible.length - 1];
+      roundOptions.innerHTML = "";
+
+      possible.forEach((size) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = `round-option${size === selectedSize ? " selected" : ""}`;
+        button.dataset.size = size;
+        button.setAttribute("aria-pressed", size === selectedSize ? "true" : "false");
+        button.innerHTML = `<strong>${size}강</strong><span>우승까지 총 ${size - 1}번</span>`;
+        button.addEventListener("click", () => selectRoundSize(size));
+        roundOptions.appendChild(button);
+      });
+
+      updateStartButton();
+    }
+
+    function selectRoundSize(size) {
+      selectedSize = size;
+      roundOptions.querySelectorAll(".round-option").forEach((button) => {
+        const isSelected = Number(button.dataset.size) === size;
+        button.classList.toggle("selected", isSelected);
+        button.setAttribute("aria-pressed", isSelected ? "true" : "false");
+      });
+      updateStartButton();
+    }
+
+    function updateStartButton() {
+      $("#startButton").textContent = `${selectedSize}강 시작하기 →`;
+    }
+
+    function startGame() {
+      roundMenus = shuffle(menus).slice(0, selectedSize);
+      nextRound = [];
+      matchIndex = 0;
+      roundNumber = 1;
+      locked = false;
+      showScreen($("#gameScreen"));
+      renderMatch();
+    }
+
+    function fillCard(card, menu) {
+      const image = card.querySelector(".food-image");
+      image.src = menu.image;
+      image.alt = menu.name;
+      card.querySelector(".food-name").textContent = menu.name;
+      card.querySelector(".restaurant").textContent = menu.restaurant;
+      card.dataset.menuId = menu.id;
+      card.classList.remove("chosen", "rejected");
+      card.style.animation = "none";
+      void card.offsetWidth;
+      card.style.animation = "";
+    }
+
+    function renderMatch() {
+      locked = false;
+      const left = roundMenus[matchIndex * 2];
+      const right = roundMenus[matchIndex * 2 + 1];
+      const totalMatches = roundMenus.length / 2;
+
+      $("#roundTitle").textContent = roundLabel(roundMenus.length);
+      $("#gameSubtitle").textContent = roundMenus.length === 2 ? "마지막 선택! 오늘 점심의 우승자를 골라주세요" : "더 끌리는 메뉴를 선택하세요";
+      $("#progressCopy").textContent = `${matchIndex + 1} / ${totalMatches}`;
+      $("#progressBar").style.width = `${((matchIndex + 1) / totalMatches) * 100}%`;
+      fillCard(leftCard, left);
+      fillCard(rightCard, right);
+    }
+
+    function choose(side) {
+      if (locked) return;
+      locked = true;
+
+      const chosenCard = side === "left" ? leftCard : rightCard;
+      const rejectedCard = side === "left" ? rightCard : leftCard;
+      const chosenMenu = roundMenus[matchIndex * 2 + (side === "left" ? 0 : 1)];
+      nextRound.push(chosenMenu);
+      chosenCard.classList.add("chosen");
+      rejectedCard.classList.add("rejected");
+
+      window.setTimeout(() => {
+        matchIndex += 1;
+        if (matchIndex < roundMenus.length / 2) {
+          renderMatch();
+          return;
+        }
+
+        if (nextRound.length === 1) {
+          showWinner(nextRound[0]);
+          return;
+        }
+
+        roundMenus = shuffle(nextRound);
+        nextRound = [];
+        matchIndex = 0;
+        roundNumber += 1;
+        renderMatch();
+      }, 500);
+    }
+
+    function showWinner(winner) {
+      $("#winnerImage").src = winner.image;
+      $("#winnerImage").alt = winner.name;
+      $("#winnerName").textContent = winner.name;
+      $("#winnerRestaurant").textContent = winner.restaurant;
+      showScreen($("#winnerScreen"));
+      launchConfetti();
+    }
+
+    function launchConfetti() {
+      const colors = ["#ff5b28", "#ffc247", "#fff1d7", "#e84329", "#73b673"];
+      for (let i = 0; i < 75; i++) {
+        const piece = document.createElement("i");
+        piece.className = "confetti";
+        piece.style.left = `${Math.random() * 100}vw`;
+        piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.borderRadius = Math.random() > .5 ? "50%" : "2px";
+        piece.style.setProperty("--duration", `${2.6 + Math.random() * 2.5}s`);
+        piece.style.setProperty("--drift", `${-120 + Math.random() * 240}px`);
+        piece.style.animationDelay = `${Math.random() * .8}s`;
+        document.body.appendChild(piece);
+        window.setTimeout(() => piece.remove(), 6000);
+      }
+    }
+
+    function goHome(event) {
+      if (event) event.preventDefault();
+      locked = false;
+      showScreen($("#setupScreen"));
+    }
+
+    leftCard.addEventListener("click", () => choose("left"));
+    rightCard.addEventListener("click", () => choose("right"));
+    $("#startButton").addEventListener("click", startGame);
+    $("#replayButton").addEventListener("click", startGame);
+    $("#quitButton").addEventListener("click", goHome);
+    $("#homeButton").addEventListener("click", goHome);
+    $("#brandLink").addEventListener("click", goHome);
+
+    $("#menuCount").textContent = menus.length;
+    buildRoundOptions();
+  </script>
+</body>
+</html>
